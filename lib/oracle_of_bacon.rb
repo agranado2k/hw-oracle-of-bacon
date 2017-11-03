@@ -33,11 +33,12 @@ class OracleOfBacon
     begin
       xml = URI.parse(uri).read
     rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError,
-      Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError,
+      Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, OpenURI::HTTPError,
       Net::ProtocolError => e
+      @response = Response.new(e.message)
       raise OracleOfBacon::NetworkError.new e
     end
-    Response.new(xml)
+    @response = Response.new(xml)
   end
 
   def make_uri_from_arguments
